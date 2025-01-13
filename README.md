@@ -7,7 +7,7 @@ In production on PNT-AP41, scheduled to run every day at midnight.
 
 * Git
 
-* Python > 3.8
+* Python < 3.13 (geoglows python package doesn't support 3.13 yet)
 
 ## Steps to get this running on a production server
 
