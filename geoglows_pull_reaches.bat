@@ -11,11 +11,13 @@ set ENV_FILE=C:\Scripts\geoglows_pull_reaches\.env
 REM Load environmen variables from .env file
 REM Each line in .env file should be in the format: KEY=VALUE
 REM See .env.example for an example .env file
-for /f "tokens=1,2 delims== " %%A in ('type %ENV_FILE%') do (
-    set VAR=%%B
-    set VAR=%VAR:"=%
-    set %%A=%VAR%
-)
+echo Loading environment variables from %ENV_FILE%...
+for /F "delims== tokens=1,* eol=#" %%i in (%filename%) do set %%i=%%~j
+
+echo REPO_PATH=%REPO_PATH%
+echo REACH_FILE=%REACH_FILE%
+echo OUTPUT_PATH=%OUTPUT_PATH%
+echo LOG_PATH=%LOG_PATH%
 
 REM Navigate to the git repository
 cd %REPO_PATH%
