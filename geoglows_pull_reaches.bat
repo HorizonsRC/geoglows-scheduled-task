@@ -6,7 +6,8 @@ REM and run the geoglows_pull_reaches.py script
 REM ============================================================
 
 REM Path to the .env file
-set ENV_FILE=C:\Scripts\geoglows-scheduled-task\.env
+REM Assuming that the .env file is in the same directory as this script
+set ENV_FILE=.env
 
 REM Load environmen variables from .env file
 REM Each line in .env file should be in the format: KEY=VALUE
@@ -17,6 +18,7 @@ FOR /F "delims== tokens=1,* eol=#" %%i in (%ENV_FILE%) do SET %%i=%%~j
 echo REPO_PATH=%REPO_PATH%
 echo REACH_FILE=%REACH_FILE%
 echo OUTPUT_PATH=%OUTPUT_PATH%
+echo BACKUP_PATH=%BACKUP_PATH%
 echo LOG_PATH=%LOG_PATH%
 
 REM Navigate to the git repository

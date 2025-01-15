@@ -13,6 +13,7 @@ load_dotenv()
 # Get the paths to the input and output files from the environment variables (.env file)
 reach_file_path = os.environ["REACH_FILE"]
 output_file_path = os.environ["OUTPUT_PATH"]
+backup_file_path = os.environ["BACKUP_PATH"]
 log_file_path = os.environ["LOG_PATH"]
 
 # Get the date that the data was pulled in a nice format for the file names
@@ -67,7 +68,9 @@ for reach, site_name in reach_df[["GeoglowsReachID", "Sitename"]].values:
 df = pd.concat(df_list, axis=1, keys=reach_df["Sitename"])
 
 # Construct the output file name from the date and path
-output_filename = os.path.join(output_file_path, f"geoglows_reaches_{date}.csv")
+output_filename = os.path.join(output_file_path, f"geoglows_reaches_latest.csv")
+backup_filename = os.path.join(backup_file_path, f"geoglows_reaches_{date}.csv")
 
 # Save the data to a CSV file
 df.to_csv(output_filename)
+df.to_csv(backup_filename)
