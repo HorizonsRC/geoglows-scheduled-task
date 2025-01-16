@@ -7,22 +7,23 @@ import tempfile
 
 # Load the environment variables from the .env file
 import os
+import shutil
 from dotenv import load_dotenv
 
 load_dotenv()
 
 # Get the paths to the input and output files from the environment variables (.env file)
-reach_file_path = os.environ["REACH_FILE"]
-output_file_path = os.environ["OUTPUT_PATH"]
-backup_file_path = os.environ["BACKUP_PATH"]
-log_file_path = os.environ["LOG_PATH"]
+reach_file = os.environ["REACH_FILE"]
+output_file = os.environ["OUTPUT_FILE"]
+backup_dir = os.environ["BACKUP_DIR"]
+log_dir = os.environ["LOG_DIR"]
 
 # Get the date that the data was pulled in a nice format for the file names
 date = pd.Timestamp.now().strftime("%Y-%m-%d")
 
 # Set up logging
 logger = logging.getLogger(__name__)
-log_filename = os.path.join(log_file_path, f"geoglows_reaches_{date}.log")
+log_filename = os.path.join(log_dir, f"geoglows_reaches_{date}.log")
 file_handler = logging.FileHandler(log_filename)
 stream_handler = logging.StreamHandler()
 file_fomatter = logging.Formatter("%(asctime)s - %(levelname)s | %(message)s")
@@ -34,9 +35,9 @@ logger.setLevel(logging.INFO)
 
 # Read the site list with reach numbers from the file.
 try:
-    reach_df = pd.read_csv(reach_file_path)
+    reach_df = pd.read_csv(reach_file)
 except Exception as e:
-    logger.error(f"Error reading file {reach_file_path}: {e}")
+    logger.error(f"Error reading file {reach_file}: {e}")
     raise
 # Remove any leading or trailing white space from the column names and values
 reach_df = reach_df.rename(columns=lambda x: x.strip())
@@ -71,43 +72,32 @@ if not df_list:
 # Combine the data into a single DataFrame (no duplicate timestamps)
 df = pd.concat(df_list, axis=1, keys=reach_df["Sitename"])
 
-# Construct the output file name from the date and path
-output_filename = os.path.join(output_file_path, f"geoglows_reaches_latest.csv")
-backup_filename = os.path.join(backup_file_path, f"geoglows_reaches_{date}.csv")
-
+# Construct the backup file name from the date and path
+backup_file = os.path.join(backup_dir, f"geoglows_backup_{date}.csv")
 
 # Save the data to a CSV file
-# If the file is open, it will be locked and the script will fail
-# That's why we save to a temporary, which we can then rename to the final file
-temp_output_dir, temp_output_file = tempfile.mkstemp(
-    dir=os.path.dirname(output_file_path)
-)
-temp_backup_dir, temp_backup_file = tempfile.mkstemp(
-    dir=os.path.dirname(backup_file_path)
-)
-
 try:
-    # Write the data to a temporary file
-    with os.fdopen(temp_output_dir, "w") as temp_output:
-        df.to_csv(temp_output_file, index=False)
-
-    # Replace the temporary file with the final file
-    os.replace(temp_output_file, output_filename)
-    logger.info("Saved data to " + output_filename)
+    df.to_csv(output_file, index=False)
+    logger.info("Saved data to " + output_file)
 except Exception as e:
-    logger.error(f"File cannot be saved to {output_filename}: {e}")
-    if os.path.exists(temp_output_file):
-        os.remove(temp_output_file)
+    logger.error(f"Output file cannot be saved to {output_file}: {e}")
 
+    logger.info("Attempting to force save the output file.")
+    # create a temp filename by adding "_temp" to the end, but before the extension
+    temp_file_parts = os.path.splitext(output_file)
+    temp_output_file = temp_file_parts[0] + ".temp"
+    df.to_csv(temp_output_file, index=False)
+    # We'll try to replace the locked file in the batch script
 try:
-    # Write the backup data to a temporary file
-    with os.fdopen(temp_backup_dir, "w") as temp_backup:
-        df.to_csv(temp_backup_file, index=False)
+    df.to_csv(backup_file, index=False)
 
-    # Replace the temporary file with the final file
-    os.replace(temp_backup_file, backup_filename)
-    logger.info("Saved backup data to " + backup_filename)
+    logger.info("Saved backup data to " + backup_file)
 except Exception as e:
-    logger.error(f"Backup file cannot be saved to {backup_filename}: {e}")
-    if os.path.exists(temp_backup_file):
-        os.remove(temp_backup_file)
+    logger.error(f"Backup file cannot be saved to {backup_file}: {e}")
+
+    logger.info("Attempting to force save the backup file.")
+    # create a temp filename by adding "_temp" to the end, but before the extension
+    temp_file_parts = os.path.splitext(backup_file)
+    temp_backup_file = temp_file_parts[0] + ".temp"
+    df.to_csv(temp_backup_file, index=False)
+    # We'll try to replace the locked file in the batch script
