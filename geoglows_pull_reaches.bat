@@ -40,15 +40,16 @@ if errorlevel 1 (
     echo Error running the Python script.
     REM If output file doesn't exist, find the temp file
     if not exist %OUTPUT_FILE% (
-      echo Searching for the temp file...
-      REM The temp file has the same filename, but with a .temp extension
-      set OUTPUT_FILE_TEMP=%OUTPUT_FILE:.csv=.temp
-      REM If the temp file exists, rename it to the output file using xcopy
-      if exist %OUTPUT_FILE_TEMP% (
-        echo Renaming the temp file to the output file...
-        xcopy %OUTPUT_FILE_TEMP% %OUTPUT_FILE% /Y
-        REM Delete the temp file
-        del %OUTPUT_FILE_TEMP%
+        echo Searching for the temp file...
+        REM The temp file has the same filename, but with a .temp extension
+        set OUTPUT_FILE_TEMP=%OUTPUT_FILE:.csv=.temp
+        REM If the temp file exists, rename it to the output file using xcopy
+        if exist %OUTPUT_FILE_TEMP% (
+            echo Renaming the temp file to the output file...
+            xcopy %OUTPUT_FILE_TEMP% %OUTPUT_FILE% /Y
+            REM Delete the temp file
+            del %OUTPUT_FILE_TEMP%
+        )
     ) 
 )
 
