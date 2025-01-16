@@ -42,7 +42,7 @@ if errorlevel 1 (
     if not exist %OUTPUT_FILE% (
         echo Searching for the temp file...
         REM The temp file has the same filename, but with a .temp extension
-        set OUTPUT_FILE_TEMP=%OUTPUT_FILE:.csv=.temp
+        set OUTPUT_FILE_TEMP=%OUTPUT_FILE:.csv=.temp%
         REM If the temp file exists, rename it to the output file using xcopy
         if exist %OUTPUT_FILE_TEMP% (
             echo Renaming the temp file to the output file...
