@@ -86,7 +86,7 @@ except Exception as e:
     # create a temp filename by adding "_temp" to the end, but before the extension
     temp_file_parts = os.path.splitext(output_file)
     temp_output_file = temp_file_parts[0] + ".temp"
-    df.to_csv(temp_output_file, index=False)
+    df.to_csv(temp_output_file)
     # We'll try to replace the locked file in the batch script
 try:
     df.to_csv(backup_file, index=False)
@@ -99,5 +99,5 @@ except Exception as e:
     # create a temp filename by adding "_temp" to the end, but before the extension
     temp_file_parts = os.path.splitext(backup_file)
     temp_backup_file = temp_file_parts[0] + ".temp"
-    df.to_csv(temp_backup_file, index=False)
+    df.to_csv(temp_backup_file)
     # We'll try to replace the locked file in the batch script
