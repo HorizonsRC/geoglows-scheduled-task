@@ -77,7 +77,7 @@ backup_file = os.path.join(backup_dir, f"geoglows_backup_{date}.csv")
 
 # Save the data to a CSV file
 try:
-    df.to_csv(output_file, index=False)
+    df.to_csv(output_file)
     logger.info("Saved data to " + output_file)
 except Exception as e:
     logger.error(f"Output file cannot be saved to {output_file}: {e}")
@@ -89,7 +89,7 @@ except Exception as e:
     df.to_csv(temp_output_file)
     # We'll try to replace the locked file in the batch script
 try:
-    df.to_csv(backup_file, index=False)
+    df.to_csv(backup_file)
 
     logger.info("Saved backup data to " + backup_file)
 except Exception as e:
