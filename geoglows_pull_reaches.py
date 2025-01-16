@@ -71,6 +71,7 @@ if not df_list:
 
 # Combine the data into a single DataFrame (no duplicate timestamps)
 df = pd.concat(df_list, axis=1, keys=reach_df["Sitename"])
+print(df.index)
 
 # Construct the backup file name from the date and path
 backup_file = os.path.join(backup_dir, f"geoglows_backup_{date}.csv")

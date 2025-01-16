@@ -45,7 +45,7 @@ if ERRORLEVEL 1 (
   REM REM If the temp file exists, rename it to the output file using xcopy
   if exist "%OUTPUT_FILE_TEMP%" (
     echo Renaming the temp file to the output file...
-    xcopy "%OUTPUT_FILE_TEMP%" "%OUTPUT_FILE%" /Y
+    xcopy "%OUTPUT_FILE_TEMP%" "%OUTPUT_FILE%" /Y /R
     REM Delete the temp file
     del "%OUTPUT_FILE_TEMP%"
   )
